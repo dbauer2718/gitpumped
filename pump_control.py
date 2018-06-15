@@ -38,6 +38,12 @@ class PumpControl(QtGui.QWidget):
         grid.addWidget(self.stopbtn,1,3)
         self.stopbtn.setCheckable(True)
         self.stopbtn.clicked.connect(self.stop_all)
+
+        # try adding a reverse direction button
+        self.revbtn = QtGui.QPushButton('Reverse Direction',self)
+        grid.addWidget(self.revbtn,1,1)
+        self.revbtn.setCheckable(True)
+        self.revbtn.clicked.connect(self.rev_dir)
        
 
         # optional column labels
@@ -114,6 +120,7 @@ class PumpControl(QtGui.QWidget):
         #initialize: set all flow rates to zero
         self.run_update()
         self.stop_all()
+        self.rev_dir(); #does this go here?
         [self.update_syringe(p) for p in pumps]
         self.commandbar.setText('')
 
@@ -124,6 +131,16 @@ class PumpControl(QtGui.QWidget):
         self.setLayout(grid)
         self.setWindowTitle('Pump control')
         self.show()
+        
+    def rev_dir(self):
+        self.runbtn.setChecked(0)
+        self.stopbtn.setChecked(1)
+        new_era.stop_all(self.ser)
+        new_era.rev_all(self.ser);
+        self.curr_state = 'Stopped'
+        self.statusbar.setText('Status: '+self.curr_state)
+        self.commandbar.setText('Last command: stop all pumps and reverse direction') 
+
         
     def stop_all(self):
         self.runbtn.setChecked(0)

@@ -24,6 +24,12 @@ def run_all(ser):
     output = ser.readline()
     if '?' in output: print cmd.strip()+' from run_all not understood'
 
+def rev_all(ser):
+	cmd = '*DIRREV\r';
+	ser.write(cmd);
+	output = ser.read_all();
+	if '?' in output: print cmd.strip()+' from run_all not understood'
+
 def stop_all(ser):
     cmd = '*STP\x0D'
     ser.write(cmd)
