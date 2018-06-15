@@ -3,7 +3,9 @@ from PyQt4 import QtGui, QtCore
 import serial
 import new_era
 
-serial_port = '/dev/tty.usbserial'
+serial_port = '/dev/tty.usbserial' # *nix
+#serial_port = 'COM1' # Windows
+
 
 syringes = {'1 ml BD':'4.699',
             '3 ml BD':'8.585',
