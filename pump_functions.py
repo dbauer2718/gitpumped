@@ -62,11 +62,11 @@ class pump_control(object):
 	def rate(self, rat=0, adr=0):
 		"""
 		This function can be used to query or set the flow rate of the pump. Note that the flow rate will be incorrect if you have not correctly set the diameter/size of the syringe in the pump (see self.dia). Acceptable rate units are uL/mL per hour/minute. If you do not specify a rate, the command will query the pump for the current flow rate setting. You can specify a number as an int/float or as a string to include the units. The rate cannot be changed while the pump is running. Returns the response from the pump. This command can only accept a maximum of 4 significant digits, and will give an error if you include more. Include the address of the pump if you have more than one pump connected, otherwise it will default to pump 0 (the default address).
-		>>> pf.rate(pump_object)
+		>>> pc.rate()
 		Pump 00 says: S10.00MH
-		>>> pf.rate(pump_object, rat=1)
+		>>> pc.rate(rat=1)
 		Pump 00 says: S1.00MH
-		>>> pf.rate(pump_object, rat='100uh')
+		>>> pc.rate(rat='100uh')
 		Pump 00 says: S100.00UH
 	
 		"""
@@ -85,9 +85,9 @@ class pump_control(object):
 		# not intuitive at all that you have to connect each pump individualy to the computer to change their address before you re-network them
 		"""
 		This function can be used to change the address of the pump currently connected to the computer. Before trying to change the address of the pump ensure that the intended pump is the only pump connected to your computer. The default address assigned is 0. This function should not be necessary unless you have more than one pump connected to your computer.
-		>>> pf.adr(pump_object, adr=0)
+		>>> pc.adr(adr=0)
 		Pump 00 says: S
-		>>> pf.adr(pump_object, adr=1)
+		>>> pc.adr(adr=1)
 		Pump 01 says: S
 	
 		"""
@@ -99,11 +99,11 @@ class pump_control(object):
 
 		"""
 		This function is used to stop the pump from running. I Note that telling the pump to stop while it is already stopped will cause the pump to return a "not applicable" error. All three of the below examples have the same functional behavior (the pump stops), but have slightly different return values. Include the address of the pump if you have more than one pump connected, otherwise it will default to pump 0 (the default address).
-		>>> pf.stop(pump_object)   # initial state of the pump was 'infusing' (running)
+		>>> pc.stop()   # initial state of the pump was 'infusing' (running)
 		Pump 00 says: P
-		>>> pf.stop(pump_object)  # state is 'paused' before running this command
+		>>> pc.stop()  # state is 'paused' before running this command
 		Pump 00 says: S
-		>>> pf.stop(pump_object)   # state is 'stopped' before running this command
+		>>> pc.stop()   # state is 'stopped' before running this command
 		Pump 00 says: S?NA
 	
 		"""
@@ -113,7 +113,7 @@ class pump_control(object):
 	def run(self, adr=0):
 		"""
 		This function is used to run the pump. The pump will run at the flow rate that is stored in memory, which can be queried via pump_rate. Note that you must stop the pump using pump_stop to change any properties of the pump (address, flow rate, syringe diameter, volume). Include the address of the pump if you have more than one pump connected, otherwise it will default to pump 0 (the default address).
-		>>> pf.pump_run(pump_object)
+		>>> pc.run()
 		Pump 00 says: I
 	
 		"""
@@ -123,9 +123,9 @@ class pump_control(object):
 	def dir(self, dir='', adr=0):
 		"""
 		This function can be used to query or set the direction that the pump can run. If you leave the argument 'dir' blank, the command will query the current direction setting. Acceptable values for dir are 'inf' or 'wdr' for infuse or withdraw. Include the address of the pump if you have more than one pump connected, otherwise it will default to pump 0 (the default address).
-		>>> pf.dir(pump_object)
+		>>> pc.dir()
 		Pump 00 says: SINF
-		>>> pf.dir(pump_object, dir='wdr')
+		>>> pc.dir(dir='wdr')
 		Pump 00 says: S
 	
 		"""
@@ -156,9 +156,9 @@ class pump_control(object):
 
 		"""
 		This function can be used to query or set the diameter of the syringe in the pump. If you do not specify a diameter/size, the command will query the pump for the current diameter setting. Acceptable values for the "dia" argument are: '1ml', '3ml', '5ml', '10ml', '20ml', or '60ml'. Include the address of the pump if you have more than one pump connected, otherwise it will default to pump 0 (the default address). You cannot change the diameter of the pump while the pump is running.
-		>>> pf.dia(pump_object)
+		>>> pc.dia()
 		('Pump 00 says: S11.99', 5ml')
-		>>> pf.dia(pump_object, '60ml')
+		>>> pc.dia('60ml')
 		Pump 00 says: S
 	
 		"""
@@ -195,11 +195,11 @@ class pump_control(object):
 	def vol(self, vol='', adr=0):
 		"""
 		This function can be used to query volume to be dispensed, set the volume to be dispensed, or set the units used in this function. If you leave the argument 'vol' blank, the command will query the current volume to be dispensed. After dispensing this volume, the pump will stop automatically. The argument 'vol' can be blank, a float, or a string denoting units ('ul' or 'ml'). If the value for 'vol' is out of range, the pump will return a '?OOR' error. Include the address of the pump if you have more than one pump connected, otherwise it will default to pump 0 (the default address).
-		>>> pf.pump_vol(pump_object)
+		>>> pc.pump_vol()
 		Pump 00 says: S14.53ML
-		>>> pf.vol(pump_object, vol='ul') # change units to microliters
+		>>> pc.vol(vol='ul') # change units to microliters
 		Pump 00 says: S
-		>>> pf.vol(pump_object, vol=3.14) # change volume to be dispensed to 3.14 UL
+		>>> pc.vol(vol=3.14) # change volume to be dispensed to 3.14 UL
 		Pump 00 says: S
 	
 		"""
@@ -217,7 +217,7 @@ class pump_control(object):
 
 		"""
 		This function is used to clear the volume dispensed (see pump_querydis). The volumes dispensed in the 'infuse' and 'withdraw' directions are stored separately in memory, and must be cleared individually. The command defaults to clearing the volume dispensed in the 'infuse' direction. Include the address of the pump if you have more than one pump connected, otherwise it will default to pump 0 (the default address).
-		>>> pf.pump_reset_vol(pump_object)
+		>>> pc.reset_vol()
 		Pump 00 says: S
 	
 		"""
@@ -232,7 +232,7 @@ class pump_control(object):
 
 		"""
 		This function is used only to query the volume that the pump has dispensed since the volume has last been cleared (pump_clearvol). The pump returns the volumes dispensed in both the infuse and withdraw directions. Include the address of the pump if you have more than one pump connected, otherwise it will default to pump 0 (the default address).
-		>>> pf.query_dis(pump_object)
+		>>> pc.query_dis()
 		Pump 00 says: SI1.000W0.000ML
 	
 		"""
