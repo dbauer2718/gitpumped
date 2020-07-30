@@ -49,6 +49,14 @@ class pump_gui(qt.QtWidgets.QDialog):
 		self.revbtn = {}
 		self.pumpStatus = {}
 
+		BD = {'1ml':'4.699',
+              '3ml':'8.585',
+              '5ml':'11.99',
+              '10ml':'14.43',
+              '20ml':'19.05',
+              '60ml':'26.59',
+              }
+		
 		for row in range(self.num_pumps):
 			# add the stuff 
 			self.pumpNum[row] = qt.QtWidgets.QLabel(str(row))
@@ -65,6 +73,8 @@ class pump_gui(qt.QtWidgets.QDialog):
 			grid.addWidget(self.pumpDir[row], row + 2, 4)
 			grid.addWidget(self.revbtn[row], row + 2, 5)
 			grid.addWidget(self.pumpStatus[row], row + 2, 6)
+			for size in BD:
+				self.syrSize[row].addItem(size)
 
 			# connecting thigns to their appropriate function
 			if test_gui == False:
@@ -159,5 +169,5 @@ class pump_gui(qt.QtWidgets.QDialog):
 
 if __name__ == "__main__":
 	app = qt.QtWidgets.QApplication([])
-	pc = pump_gui(test_gui=False)
+	pc = pump_gui(test_gui=True)
 	app.exec_()
