@@ -93,8 +93,8 @@ class pump_gui(qt.QtWidgets.QDialog):
 		# connect run and stop
 		# TODO: eventually fix these to work with more than 1 pump
 		if test_gui == False:
-			self.runbtn.clicked.connect(self.run(0)) # will not work with more than 1 pump
-			self.stopbtn.clicked.connect(self.stop(0)) # will not work with more than 1 pump
+			self.runbtn.clicked.connect(self.run) # will not work with more than 1 pump
+			self.stopbtn.clicked.connect(self.stop) # will not work with more than 1 pump
 		
 
 		self.setLayout(grid)

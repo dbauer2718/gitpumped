@@ -21,10 +21,12 @@ class pump_control(object):
 			# conider for loop for trying com ports other than 1? shouldnt need to go higher than 10
 			for i in range(1, 11):
 				try:
-					ser_port = 'COM1'
+					ser_port = 'COM' + str(i)
 					print('Trying to reach the pump on {0}...'.format(ser_port))
 					self.serpump = serial.Serial(port = ser_port, baudrate=19200)
-					output = self.serpump.read_all() # read error code in case pump is in alarm state. this line should clear the alarm. 
+					output = self.serpump.read_all() # read error code in case pump is in alarm state. this line should clear the alarm.
+					if output == b'':
+						break
 				except Exception as ex2:
 					type, value, traceback = sys.exc_info()
 #					print(value)
