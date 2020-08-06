@@ -99,6 +99,7 @@ class pump_gui(qt.QtWidgets.QDialog):
 
 		self.setLayout(grid)
 		self.setWindowTitle('Pump Control')
+		self.pumpDir[0].setText(self.pc.dir(adr=adr)) # initialize pump direction
 		self.show()
 
 
@@ -148,7 +149,7 @@ class pump_gui(qt.QtWidgets.QDialog):
 		status = self.pc.dia(adr=adr, dia=size)
 		self.pumpStatus[row].setText(status)
 
-	def update_rate(self, row):
+	def update_rate(self, row=0):
 		self.runbtn.setChecked(0)
 		self.stopbtn.setChecked(1)
 		self.stop(row)
