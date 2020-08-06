@@ -18,16 +18,18 @@ class pump_control(object):
 			output = self.serpump.read_all() # read error code in case pump is in alarm state. this line should clear the alarm. 
 
 		except serial.serialutil.SerialException:
-			try:
-				ser_port = 'COM1'
-				print('Trying to reach the pump on {0}...'.format(ser_port))
-				self.serpump = serial.Serial(port = ser_port, baudrate=19200)
-				output = self.serpump.read_all() # read error code in case pump is in alarm state. this line should clear the alarm. 
-			except Exception as ex2:
-				type, value, traceback = sys.exc_info()
-#				print(value)
-				self.serpump = False
-				print("ERROR: Pump is not connected to the computer, or the port is incorrect. Please see documentation for initialize_pump for troubleshooting.")
+			# conider for loop for trying com ports other than 1? shouldnt need to go higher than 10
+			for i in range(1, 11):
+				try:
+					ser_port = 'COM1'
+					print('Trying to reach the pump on {0}...'.format(ser_port))
+					self.serpump = serial.Serial(port = ser_port, baudrate=19200)
+					output = self.serpump.read_all() # read error code in case pump is in alarm state. this line should clear the alarm. 
+				except Exception as ex2:
+					type, value, traceback = sys.exc_info()
+#					print(value)
+					self.serpump = False
+					print("ERROR: Pump is not connected to the computer, or the port is incorrect. Please see documentation for initialize_pump for troubleshooting.")
 		except Exception as ex:
 			type, value, traceback = sys.exc_info()
 			print(type)
@@ -36,6 +38,7 @@ class pump_control(object):
 			print("ERROR: Pump is not connected to the computer, or the port is incorrect. Please see documentation for initialize_pump for troubleshooting.")
 
 	def _parse_output(self, output):
+		output = output.decode('utf-8')
 		splitout = output[:-1]
 		if splitout[0] != '\x02':
 			return 'ERROR: Pump response not interpretable. Your command was probably invalid.'
@@ -169,7 +172,7 @@ class pump_control(object):
 			  '20ml':'19.05',
 			  '60ml':'26.59',
 			  }
-		BD_lookup = {v: k for k, v in BD.iteritems()}
+		BD_lookup = {v: k for k, v in BD.items()}
 
 		if not dia: 
 			parsed_out = self.serwrite('%idia\r'%adr)
@@ -275,8 +278,8 @@ if __name__ == "__main__":
 	print('Querying pump diameter:', output)
 	output = pc.dia(dia='60ml')
 	print('Changing diamater to 60ml:', output)
-	output = pc.query_dia()
-	print('Confirming diameter changed via query_dia:', output)
+#	output = pc.query_dia()
+#	print('Confirming diameter changed via query_dia:', output)
 
 	# Volume:
 	print('\nTesting Volume functions...')

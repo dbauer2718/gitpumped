@@ -57,6 +57,9 @@ class pump_gui(qt.QtWidgets.QDialog):
               '60ml':'26.59',
               }
 		
+		self.runbtn = qt.QtWidgets.QPushButton('Run/Update', self)
+		self.stopbtn = qt.QtWidgets.QPushButton('Stop', self)
+		
 		for row in range(self.num_pumps):
 			# add the stuff 
 			self.pumpNum[row] = qt.QtWidgets.QLabel(str(row))
@@ -78,12 +81,11 @@ class pump_gui(qt.QtWidgets.QDialog):
 
 			# connecting thigns to their appropriate function
 			if test_gui == False:
-				self.syrSize[row].activated.connect(self.change_dia(row))
-				self.pumpRate[row].editingFinished(self.update_rate(row))
-				self.revbtn[row].clicked.connect(self.reverse_direction(row))
+				self.syrSize[row].activated.connect(self.change_dia)
+				self.pumpRate[row].editingFinished.connect(self.update_rate)
+				self.revbtn[row].clicked.connect(self.reverse_direction)
 
-		self.runbtn = qt.QtWidgets.QPushButton('Run/Update', self)
-		self.stopbtn = qt.QtWidgets.QPushButton('Stop', self)
+
 
 		grid.addWidget(self.runbtn, row + 3, 4)
 		grid.addWidget(self.stopbtn, row + 3, 5)
@@ -100,7 +102,7 @@ class pump_gui(qt.QtWidgets.QDialog):
 		self.show()
 
 
-	def reverse_direction(self, row):
+	def reverse_direction(self, row=0):
 		''' 
 		'''
 		self.stopbtn.setChecked(1)
@@ -108,33 +110,36 @@ class pump_gui(qt.QtWidgets.QDialog):
 		self.stop()
 		# send serial command to reverse
 		adr = self.row2adr(row)
-		init_dir = self.pc.quer_dir(adr)
-		if init_dir == 'INF':
+		init_dir = self.pc.query_dir(adr)
+		if init_dir == 'INF' or init_dir == 'inf':
 			status = self.pc.dir(dir='wdr', adr=adr)
-		elif init_dir == 'wdr':
+			status = self.pc.dir(adr=adr) # confirm change
+		elif init_dir == 'WDR' or init_dir == 'wdr':
 			status = self.pc.dir(dir='inf', adr=adr)
+			status = self.pc.dir(adr=adr) # confirm change
 		else:
 			status = 'Error'
 		self.pumpDir[row].setText(status)
 
-	def stop(self, row):
+	def stop(self, row=0):
 		self.stopbtn.setChecked(1)
 		self.runbtn.setChecked(0)
 #		adr = self.row2adr(row)
 		# this will only run once if 1 pump connected
-		for adr in self.num_pumps:
+		for adr in range(self.num_pumps):
 			status = self.pc.stop(adr=adr)
 		# set status to stopped
 		self.pumpStatus[row].setText(status)
 
-	def run(self, row):
+	def run(self, row=0):
 		self.runbtn.setChecked(1)
 		self.stopbtn.setChecked(0)
-		for adr in self.num_pumps:
+		for adr in range(self.num_pumps):
 			status = self.pc.run(adr=adr)
 		self.pumpStatus[row].setText(status)
 
-	def change_dia(self, row):
+	def change_dia(self, row=0):
+		row = 0
 		self.runbtn.setChecked(0)
 		self.stopbtn.setChecked(1)
 		self.stop(row)
@@ -169,5 +174,5 @@ class pump_gui(qt.QtWidgets.QDialog):
 
 if __name__ == "__main__":
 	app = qt.QtWidgets.QApplication([])
-	pc = pump_gui(test_gui=True)
+	pc = pump_gui(test_gui=False)
 	app.exec_()
