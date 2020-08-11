@@ -39,6 +39,7 @@ class pump_gui(qt.QtWidgets.QDialog):
 		
 		# temp
 		self.num_pumps = 1 # change this later to be number of pumps found
+		adr = 0
 
 		# initialize dictionaries containing labels, buttons, etc
 		self.pumpNum = {}
